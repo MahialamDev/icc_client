@@ -39,7 +39,6 @@ export default function ResponsiveClientList() {
     setPage(1); 
   };
 
-  // ক্লায়েন্ট সাইড ফিল্টারিং
   const filteredClients = allClients.filter(client => {
     const matchesName = client?.client_name?.toLowerCase().includes(filters.name.toLowerCase());
     const matchesMobile = client?.mobile?.toLowerCase().includes(filters.mobile.toLowerCase());
@@ -63,21 +62,12 @@ export default function ResponsiveClientList() {
     refetch();
   };
 
-  const handleMarkPaid = (clientName) => {
-    Swal.fire({
-      title: "Success!",
-      text: `Bill for ${clientName} has been marked as Paid.`,
-      icon: "success",
-      confirmButtonColor: '#2563eb',
-    });
-  };
-
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-600 antialiased selection:bg-blue-500 selection:text-white">
-      <div className="container mx-auto p-4 md:p-6 max-w-[1600px] flex flex-col h-screen max-h-screen overflow-hidden">
+      <div className="container mx-auto p-3 md:p-6 max-w-[1600px] flex flex-col h-screen max-h-screen overflow-hidden">
         
         {/* --- HEADER SECTION --- */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-6 shrink-0">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4 shrink-0">
           <div>
             <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r bg-clip-text text-transparent from-slate-900 to-slate-700 tracking-tight">
               ISP Client Management
@@ -87,75 +77,84 @@ export default function ResponsiveClientList() {
             </p>
           </div>
 
-          {/* 🔍 সার্চ ফিল্ডসমূহ (SaaS স্টাইল গ্রিড) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2 w-full xl:w-auto flex-grow max-w-5xl">
-            <input
-              type="text"
-              name="name"
-              value={filters.name}
-              onChange={handleFilterChange}
-              placeholder="Search by Name..."
-              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
-            />
-            <input
-              type="text"
-              name="mobile"
-              value={filters.mobile}
-              onChange={handleFilterChange}
-              placeholder="Search by Mobile..."
-              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
-            />
-            <input
-              type="text"
-              name="ip"
-              value={filters.ip}
-              onChange={handleFilterChange}
-              placeholder="Search by IP..."
-              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
-            />
-            <input
-              type="text"
-              name="address"
-              value={filters.address}
-              onChange={handleFilterChange}
-              placeholder="Search by Address..."
-              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
-            />
-            <select
-              name="status"
-              value={filters.status}
-              onChange={handleFilterChange}
-              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-700 font-medium cursor-pointer"
-            >
-              <option value="">All Status</option>
-              <option value="Active">🟢 Active</option>
-              <option value="Inactive">🔴 Inactive</option>
-            </select>
+          {/* 🔍 সার্চ ফিল্ডসমূহ (মোবাইলে এখন ডানে-বামে সুন্দর স্ক্রল হবে, পিসিতে গ্রিড থাকবে) */}
+          <div className="w-full xl:w-auto overflow-x-auto no-scrollbar -mx-3 px-3 md:mx-0 md:px-0">
+            <div className="flex xl:grid xl:grid-cols-5 gap-2 min-w-[750px] xl:min-w-0 pb-1 xl:pb-0">
+              <input
+                type="text"
+                name="name"
+                value={filters.name}
+                onChange={handleFilterChange}
+                placeholder="Search by Name..."
+                className="w-[160px] xl:w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800"
+              />
+              <input
+                type="text"
+                name="mobile"
+                value={filters.mobile}
+                onChange={handleFilterChange}
+                placeholder="Search by Mobile..."
+                className="w-[150px] xl:w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800"
+              />
+              <input
+                type="text"
+                name="ip"
+                value={filters.ip}
+                onChange={handleFilterChange}
+                placeholder="Search by IP..."
+                className="w-[140px] xl:w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800"
+              />
+              <input
+                type="text"
+                name="address"
+                value={filters.address}
+                onChange={handleFilterChange}
+                placeholder="Search by Address..."
+                className="w-[160px] xl:w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800"
+              />
+              <select
+                name="status"
+                value={filters.status}
+                onChange={handleFilterChange}
+                className="w-[130px] xl:w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-700 font-medium cursor-pointer"
+              >
+                <option value="">All Status</option>
+                <option value="Active">🟢 Active</option>
+                <option value="Inactive">🔴 Inactive</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* --- ACTION BUTTONS & BADGE --- */}
-        <div className="flex justify-between items-center gap-3 mb-4 shrink-0 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="flex items-center gap-2">
-            <Link href={'/post'} className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-semibold shadow-sm transition-all">
+        {/* --- ACTION BUTTONS & BADGE (গিজিগিজি দূর করতে রেসপন্সিভ লেআউট) --- */}
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mb-4 shrink-0 bg-white p-3 rounded-2xl border border-slate-100 shadow-xs">
+          <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
+            <Link href={'/post'} className="inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-semibold shadow-xs transition-all shrink-0">
               <MdPersonAdd size={16} /> Add New
             </Link>
-            <ClientReportActions filteredData={filteredClients} />
+            {/* মোবাইল স্ক্রিনে টোটাল কাউন্টারটি এখানে চলে আসবে যাতে স্পেস বাঁচে */}
+            <div className="sm:hidden bg-slate-100 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 font-mono">
+              TOTAL: {totalClients}
+            </div>
           </div>
-          <div className="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide border border-slate-200">
-            TOTAL: {totalClients}
+          
+          <div className="flex items-center justify-end gap-2 w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+            <ClientReportActions filteredData={filteredClients} />
+            <div className="hidden sm:block bg-slate-100 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 font-mono tracking-wide">
+              TOTAL: {totalClients}
+            </div>
           </div>
         </div>
 
-        {/* --- MAIN CONTENT AREA (Scroll Fixed for PC) --- */}
+        {/* --- MAIN CONTENT AREA --- */}
         <div className="flex-grow overflow-hidden min-h-0 flex flex-col">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center flex-grow bg-white rounded-2xl shadow-sm border border-slate-100">
+            <div className="flex flex-col items-center justify-center flex-grow bg-white rounded-2xl shadow-xs border border-slate-100">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-3"></div>
               <p className="text-slate-400 font-semibold animate-pulse text-xs uppercase tracking-wider">Loading Subscriber Database...</p>
             </div>
           ) : clientsData.length === 0 ? (
-            <div className="flex flex-col items-center justify-center flex-grow bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <div className="flex flex-col items-center justify-center flex-grow bg-white rounded-2xl shadow-xs border border-slate-100 p-6">
               <div className="p-3 bg-slate-50 rounded-full text-slate-400 mb-2">
                 <MdSearch size={28} />
               </div>
@@ -164,10 +163,10 @@ export default function ResponsiveClientList() {
             </div>
           ) : (
             <>
-              {/* 📱 Mobile Box/Card View (Scrollable on Mobile) */}
+              {/* 📱 Mobile Box/Card View */}
               <div className="grid grid-cols-1 gap-3 md:hidden overflow-y-auto pb-4 flex-grow">
                 {clientsData.map(client => (
-                  <div key={client?._id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-3">
+                  <div key={client?._id} className="bg-white p-4 rounded-2xl shadow-xs border border-slate-100 flex flex-col gap-3">
                     <div className="flex justify-between items-start">
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded font-mono mr-1">SL {client?.sl}</span>
@@ -221,7 +220,7 @@ export default function ResponsiveClientList() {
                       {client?.promise_note && <p className="text-xs italic text-slate-400"><strong className="text-slate-500">Note:</strong> {client?.promise_note}</p>}
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-50 justify-end border border-red-500">
+                    <div className="flex flex-wrap gap-1.5 pt-2 justify-end border-t border-slate-100">
                       <EditClientBtn client={client} refetch={refetch} />
                       <PromiseBtn client={client} refetch={refetch} />
                       <PaidBtns client={client} refetch={refetch} />
@@ -230,8 +229,8 @@ export default function ResponsiveClientList() {
                 ))}
               </div>
 
-              {/* 🖥️ Desktop Table View (এখানে স্ক্রল লক করা হয়েছে পিসির জন্য) */}
-              <div id="printable-client-table" className="hidden md:block bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 flex-grow min-h-0">
+              {/* 🖥️ Desktop Table View */}
+              <div id="printable-client-table" className="hidden md:block bg-white rounded-2xl shadow-xs overflow-hidden border border-slate-100 flex-grow min-h-0">
                 <div className="overflow-y-auto max-h-full h-full custom-scrollbar">
                   <table className="w-full text-left border-collapse relative">
                     <thead>
@@ -300,7 +299,6 @@ export default function ResponsiveClientList() {
                               <EditClientBtn client={client} refetch={refetch} />
                               <PromiseBtn client={client} refetch={refetch} />
                               <PaidBtns client={client} refetch={refetch} />
-                              
                             </div>
                           </td>
                         </tr>
