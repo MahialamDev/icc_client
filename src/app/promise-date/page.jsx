@@ -8,21 +8,32 @@ import Swal from 'sweetalert2';
 export default function PromisesPage() {
   const instance = useAxios();
   
-  // 🔍 ফিল্টার স্টেট (সরাসরি তারিখের ওপর নির্ভরশীল)
-  const [promiseDate, setPromiseDate] = useState('');
+  // 🔍 ফিল্টার স্টেট
+  const [promiseDate, setPromiseDate] = useState(''); // এটি YYYY-MM-DD ফরম্যাটেই থাকবে
   const [addressSearch, setAddressSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  // 🔄 নির্দিষ্ট তারিখের প্রমিজ ডেটা ফেচ করা
-  const { data: serverResponse = {}, refetch, isLoading } = useQuery({
-    queryKey: ['promises-data', promiseDate, addressSearch, page],
-    queryFn: async () => {
-      const res = await instance.get(`/get-promises-data?date=${promiseDate}&address=${addressSearch}&page=${page}`);
-      return res.data; 
-    },
-    keepPreviousData: true
-  });
+// 🔄 নির্দিষ্ট তারিখের প্রমিজ ডেটা ফেচ করা
+const { data: serverResponse = {}, refetch, isLoading } = useQuery({
+  queryKey: ['promises-data', promiseDate, addressSearch, page],
+  queryFn: async () => {
+    let dayOnly = '';
+    
+    // ফ্রন্টএন্ডে তারিখ থেকে শুধু দিন আলাদা করা হচ্ছে 🎯
+    if (promiseDate) {
+      const parts = promiseDate.split('-'); // "2026-06-23" -> ['2026', '06', '23']
+      if (parts.length === 3) {
+        dayOnly = parseInt(parts[2], 10); // শুধু '23' সংখ্যাটি নেবে
+      }
+    }
 
+    // ব্যাকএন্ডে আমরা এখন পুরো ডেটের বদলে শুধু দিন (day) পাঠাচ্ছি
+    const res = await instance.get(`/get-promises-data?day=${dayOnly}&address=${addressSearch}&page=${page}`);
+    return res.data; 
+  },
+  keepPreviousData: true
+});
+  
   const promisesList = serverResponse?.data || [];
   const totalPromises = serverResponse?.totalPromises || 0;
   const totalPages = serverResponse?.totalPages || 1;
@@ -73,7 +84,6 @@ export default function PromisesPage() {
             .report-table th, .report-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; font-size: 13px; }
             .report-table th { background-color: #f3f4f6; color: #374151; font-weight: bold; text-transform: uppercase; font-size: 11px; }
             .report-table tr:nth-child(even) { background-color: #fafafa; }
-            .footer { position: fixed; bottom: 10px; left: 0; right: 0; text-align: center; font-size: 10px; color: #9ca3af; border-top: 1px dashed #e5e7eb; padding-top: 5px; }
           </style>
         </head>
         <body>
@@ -81,7 +91,7 @@ export default function PromisesPage() {
             <div>
               <div class="report-title">🤝 Payment Promise Collection Report</div>
               <div class="filter-meta">
-                ${promiseDate ? `<strong>Target Date:</strong> ${new Date(promiseDate).toLocaleDateString('en-GB')} | ` : '<strong>Target Date:</strong> All Dates | '}
+                ${promiseDate ? `<strong>Target Day:</strong> ${promiseDate.split('-')}th of Month | ` : '<strong>Target Day:</strong> All Days | '}
                 ${addressSearch ? `<strong>Location Filter:</strong> "${addressSearch}" | ` : ''}
                 <strong>Page:</strong> ${page} of ${totalPages}
               </div>
@@ -91,7 +101,6 @@ export default function PromisesPage() {
               <strong>Print Date:</strong> ${new Date().toLocaleString('en-GB')}
             </div>
           </div>
-          
           <table class="report-table">
             <thead>
               <tr>
@@ -102,9 +111,7 @@ export default function PromisesPage() {
                 <th style="width: 25%;">Collection Note</th>
               </tr>
             </thead>
-            <tbody>
-              ${tableRows}
-            </tbody>
+            <tbody>${tableRows}</tbody>
           </table>
           <script>
             window.onload = function() {
@@ -123,7 +130,6 @@ export default function PromisesPage() {
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
-      
       {/* হেডার */}
       <div className="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b pb-4">
         <div>
@@ -131,14 +137,12 @@ export default function PromisesPage() {
             🤝 Payment Promise Directory
           </h1>
           <p className="text-xs md:text-sm text-gray-500">
-            Strictly date-based filtering. Select any year or month from calendar.
+            Monthly recurring day-based filtering. Select any date to filter clients by that specific "day".
           </p>
         </div>
 
         {/* ফিল্টারিং প্যানেল */}
         <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto flex-grow max-w-3xl justify-end items-center">
-          
-          {/* সার্চ এরিয়া */}
           <div className="relative w-full sm:flex-grow">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><MdLocationOn size={16} /></span>
             <input 
@@ -150,7 +154,6 @@ export default function PromisesPage() {
             />
           </div>
           
-          {/* 📅 ডাইনামিক ডেট ইনপুট (যেকোনো মাস/বছর সিলেক্ট করা যাবে) */}
           <div className="relative w-full sm:w-48">
             <input 
               type="date" 
@@ -168,7 +171,6 @@ export default function PromisesPage() {
             )}
           </div>
 
-          {/* প্রিন্ট বাটন */}
           <button
             onClick={handlePrintAllReport}
             className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center gap-1.5 shadow-md w-full sm:w-auto px-4 border-none"
@@ -182,7 +184,7 @@ export default function PromisesPage() {
         </div>
       </div>
 
-      {/* রেন্ডারিং এরিয়া */}
+      {/* রেন্ডারিং এরিয়া */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center min-h-[300px] bg-white rounded-xl shadow-sm">
           <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-amber-500 mb-3"></div>
@@ -190,8 +192,8 @@ export default function PromisesPage() {
         </div>
       ) : promisesList.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[300px] bg-white rounded-xl p-6 border text-center shadow-sm">
-          <p className="text-gray-400 text-lg font-semibold">No Bills Scheduled on This Date</p>
-          <p className="text-gray-400 text-xs mt-1">Please change the calendar date filter to search past/future logs.</p>
+          <p className="text-gray-400 text-lg font-semibold">No Bills Scheduled on This Day</p>
+          <p className="text-gray-400 text-xs mt-1">Please change the calendar date filter to search by another day.</p>
         </div>
       ) : (
         <>

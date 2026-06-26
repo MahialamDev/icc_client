@@ -1,9 +1,10 @@
 'use client';
+
 import useAxios from '@/hook/useAxios';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { MdLocalPhone, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
+import { MdLocalPhone, MdNavigateBefore, MdNavigateNext, MdSearch, MdPersonAdd } from 'react-icons/md';
 import Swal from 'sweetalert2';
 import ClientReportActions from '@/components/ClientReportActions'; 
 import PaidBtns from '@/components/PaidBtns';
@@ -19,7 +20,7 @@ export default function ResponsiveClientList() {
     mobile: '',
     ip: '',
     address: '',
-    status: '' // ⚡ স্ট্যাটাস ফিল্টারিং এর জন্য নতুন স্টেট যুক্ত করা হলো
+    status: ''
   });
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -38,14 +39,12 @@ export default function ResponsiveClientList() {
     setPage(1); 
   };
 
-  // 📝 ক্লায়েন্ট সাইড ফিল্টারিং (স্ট্যাটাসসহ আপডেট করা হয়েছে)
+  // ক্লায়েন্ট সাইড ফিল্টারিং
   const filteredClients = allClients.filter(client => {
     const matchesName = client?.client_name?.toLowerCase().includes(filters.name.toLowerCase());
     const matchesMobile = client?.mobile?.toLowerCase().includes(filters.mobile.toLowerCase());
     const matchesIp = client?.ip?.toLowerCase().includes(filters.ip.toLowerCase());
     const matchesAddress = client?.address?.toLowerCase().includes(filters.address.toLowerCase());
-    
-    // ⚡ স্ট্যাটাস ফিল্টার সিলেক্ট করা থাকলে মিলিয়ে দেখবে, খালি থাকলে সব দেখাবে
     const matchesStatus = filters.status === '' || client?.status === filters.status;
     
     return matchesName && matchesMobile && matchesIp && matchesAddress && matchesStatus;
@@ -67,35 +66,36 @@ export default function ResponsiveClientList() {
   const handleMarkPaid = (clientName) => {
     Swal.fire({
       title: "Success!",
-      text: `Bill for ${clientName} has been marked as Paid (Dummy).`,
+      text: `Bill for ${clientName} has been marked as Paid.`,
       icon: "success",
-      confirmButtonColor: '#10B981',
+      confirmButtonColor: '#2563eb',
     });
   };
 
   return (
-    <div>
-      <div className="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
-        {/* Header section */}
-        <div className="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+    <div className="min-h-screen bg-slate-50/50 text-slate-600 antialiased selection:bg-blue-500 selection:text-white">
+      <div className="container mx-auto p-4 md:p-6 max-w-[1600px] flex flex-col h-screen max-h-screen overflow-hidden">
+        
+        {/* --- HEADER SECTION --- */}
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-6 shrink-0">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800">
+            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r bg-clip-text text-transparent from-slate-900 to-slate-700 tracking-tight">
               ISP Client Management
             </h1>
-            <p className="text-xs md:text-sm text-gray-500">
+            <p className="text-xs md:text-sm text-slate-400 mt-0.5 font-medium">
               Manage network subscribers layout optimized for all screens
             </p>
           </div>
 
-          {/* 🔍 সার্চ ফিল্ডসমূহ (স্ট্যাটাস ড্রপডাউন গ্রিডে সেট করা হয়েছে) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 w-full lg:w-auto flex-grow max-w-5xl">
+          {/* 🔍 সার্চ ফিল্ডসমূহ (SaaS স্টাইল গ্রিড) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2 w-full xl:w-auto flex-grow max-w-5xl">
             <input
               type="text"
               name="name"
               value={filters.name}
               onChange={handleFilterChange}
               placeholder="Search by Name..."
-              className="w-full px-3 py-1.5 md:py-2 text-xs md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
             />
             <input
               type="text"
@@ -103,7 +103,7 @@ export default function ResponsiveClientList() {
               value={filters.mobile}
               onChange={handleFilterChange}
               placeholder="Search by Mobile..."
-              className="w-full px-3 py-1.5 md:py-2 text-xs md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
             />
             <input
               type="text"
@@ -111,7 +111,7 @@ export default function ResponsiveClientList() {
               value={filters.ip}
               onChange={handleFilterChange}
               placeholder="Search by IP..."
-              className="w-full px-3 py-1.5 md:py-2 text-xs md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
             />
             <input
               type="text"
@@ -119,185 +119,221 @@ export default function ResponsiveClientList() {
               value={filters.address}
               onChange={handleFilterChange}
               placeholder="Search by Address..."
-              className="w-full px-3 py-1.5 md:py-2 text-xs md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-800"
             />
-            
-            {/* ⚡ নতুন যুক্ত করা স্ট্যাটাস ফিল্টারিং ড্রপডাউন */}
             <select
               name="status"
               value={filters.status}
               onChange={handleFilterChange}
-              className="w-full px-3 py-1.5 md:py-2 text-xs md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 font-medium cursor-pointer"
+              className="w-full px-3 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-700 font-medium cursor-pointer"
             >
               <option value="">All Status</option>
               <option value="Active">🟢 Active</option>
               <option value="Inactive">🔴 Inactive</option>
             </select>
           </div>
+        </div>
 
-          <div className="bg-blue-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg shadow text-xs md:text-sm font-medium text-center whitespace-nowrap self-stretch sm:self-auto flex items-center justify-center">
-            Total Clients: {totalClients}
+        {/* --- ACTION BUTTONS & BADGE --- */}
+        <div className="flex justify-between items-center gap-3 mb-4 shrink-0 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="flex items-center gap-2">
+            <Link href={'/post'} className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-semibold shadow-sm transition-all">
+              <MdPersonAdd size={16} /> Add New
+            </Link>
+            <ClientReportActions filteredData={filteredClients} />
+          </div>
+          <div className="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide border border-slate-200">
+            TOTAL: {totalClients}
           </div>
         </div>
 
-        {/* অ্যাকশন বাটন সেকশন */}
-        <div className="mb-4 flex flex-wrap justify-between items-center gap-3">
-          <Link href={'/post'} className="btn btn-info text-white btn-sm md:btn-md">
-            Add New
-          </Link>
-          <ClientReportActions filteredData={filteredClients} />
-        </div>
-
-        {/* --- LOADING ANIMATION --- */}
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-xl shadow-md border border-gray-100">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mb-4"></div>
-            <p className="text-gray-500 font-medium animate-pulse text-sm">Loading Client Data, Please wait...</p>
-          </div>
-        ) : clientsData.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-xl shadow-md border border-gray-100 p-6">
-            <p className="text-gray-400 text-lg font-semibold">No Clients Found</p>
-            <p className="text-gray-400 text-xs mt-1">Try adjusting your search criteria</p>
-          </div>
-        ) : (
-          <>
-            {/* 1. Mobile Box/Card View */}
-            <div className="grid grid-cols-1 gap-4 md:hidden">
-              {clientsData.map(client => (
-                <div key={client?._id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col gap-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <span className="text-xs font-mono text-gray-400 mr-1">#{client?.sl}</span>
-                      <h3 className="text-base font-bold text-gray-800 inline-block">{client?.client_name}</h3>
-                      <p className="text-xs text-gray-400 mt-0.5">{client.zone}</p>
-                    </div>
-                    {/* ⚡ রিপোর্ট বাটন এবং একটিভ স্ট্যাটাস এখন পাশাপাশি উপরে */}
-                    <div className="flex items-center gap-2">
-                      <ReportBtn client={client} />
-                      <span onClick={() => handleStatusUpdate(client?._id, client?.status)} className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border cursor-pointer ${client?.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>{client?.status}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="text-xs flex flex-col gap-1.5 text-gray-500 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-gray-700">IP Address:</span>
-                      <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-mono text-xs font-medium">{client?.ip || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-gray-700">Mobile:</span>
-                      {client?.mobile ? (
-                        <a 
-                          href={`tel:${client.mobile}`} 
-                          className="text-blue-600 hover:underline flex items-center gap-1 font-mono text-xs bg-white border border-gray-200 px-2 py-0.5 rounded shadow-sm"
+        {/* --- MAIN CONTENT AREA (Scroll Fixed for PC) --- */}
+        <div className="flex-grow overflow-hidden min-h-0 flex flex-col">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center flex-grow bg-white rounded-2xl shadow-sm border border-slate-100">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-3"></div>
+              <p className="text-slate-400 font-semibold animate-pulse text-xs uppercase tracking-wider">Loading Subscriber Database...</p>
+            </div>
+          ) : clientsData.length === 0 ? (
+            <div className="flex flex-col items-center justify-center flex-grow bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+              <div className="p-3 bg-slate-50 rounded-full text-slate-400 mb-2">
+                <MdSearch size={28} />
+              </div>
+              <p className="text-slate-700 font-bold text-base">No Clients Match Filters</p>
+              <p className="text-slate-400 text-xs mt-0.5">Please check your spelling or adjust search criteria</p>
+            </div>
+          ) : (
+            <>
+              {/* 📱 Mobile Box/Card View (Scrollable on Mobile) */}
+              <div className="grid grid-cols-1 gap-3 md:hidden overflow-y-auto pb-4 flex-grow">
+                {clientsData.map(client => (
+                  <div key={client?._id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded font-mono mr-1">SL {client?.sl}</span>
+                        <h3 className="text-sm font-bold text-slate-800 inline-block mt-1">{client?.client_name}</h3>
+                        <p className="text-xs text-slate-400 font-medium mt-0.5">{client.zone}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <ReportBtn client={client} />
+                        <span 
+                          onClick={() => handleStatusUpdate(client?._id, client?.status)} 
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold border transition-colors cursor-pointer ${
+                            client?.status === 'Active' 
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
+                              : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
+                          }`}
                         >
-                          <MdLocalPhone size={12} className="text-green-500" /> {client.mobile}
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">N/A</span>
+                          {client?.status}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="text-xs flex flex-col gap-2 text-slate-500 bg-slate-50/50 p-3 rounded-xl border border-slate-100 font-medium">
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400">IP Address:</span>
+                        <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-lg font-mono text-xs font-semibold">{client?.ip || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400">Mobile:</span>
+                        {client?.mobile ? (
+                          <a href={`tel:${client.mobile}`} className="text-blue-600 hover:underline flex items-center gap-1 font-mono text-xs bg-white border border-slate-200 px-2 py-0.5 rounded-md shadow-xs">
+                            <MdLocalPhone size={12} className="text-emerald-500" /> {client.mobile}
+                          </a>
+                        ) : (
+                          <span className="text-slate-400">N/A</span>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400">Monthly Bill:</span>
+                        <span className="text-slate-900 font-extrabold text-sm">৳{client?.amount || 0}</span>
+                      </div>
+                      {client?.promise_date && (
+                        <div className="flex justify-between items-center bg-amber-50/60 p-2 rounded-lg border border-amber-100 text-amber-800 text-[11px]">
+                          <span className="font-bold">Promise Date:</span>
+                          <span className="font-semibold">{client?.promise_date}</span>
+                        </div>
                       )}
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-gray-700">Amount:</span>
-                      <span className="text-gray-900 font-bold">৳{client?.amount || 0}</span>
+
+                    <div className="text-xs flex flex-col gap-1 text-slate-500">
+                      <p><strong className="text-slate-700">Address:</strong> {client?.address}</p>
+                      {client?.promise_note && <p className="text-xs italic text-slate-400"><strong className="text-slate-500">Note:</strong> {client?.promise_note}</p>}
                     </div>
-                    {client?.promise_date && (
-                      <div className="flex justify-between items-center bg-amber-50 p-1.5 rounded border border-amber-100 text-amber-800">
-                        <span className="font-semibold">Promise Date:</span>
-                        <span className="font-medium text-xs">{client?.promise_date}</span>
-                      </div>
-                    )}
-                  </div>
 
-                  <div className="text-xs flex flex-col gap-2 text-gray-500">
-                    <p><strong className="text-gray-700">Address:</strong> {client?.address}</p>
-                    {client?.promise_note && <p className="text-xs italic text-gray-400"><strong className="text-gray-600">Note:</strong> {client?.promise_note}</p>}
+                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-50 justify-end border border-red-500">
+                      <EditClientBtn client={client} refetch={refetch} />
+                      <PromiseBtn client={client} refetch={refetch} />
+                      <PaidBtns client={client} refetch={refetch} />
+                    </div>
                   </div>
-
-                  <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100 justify-end">
-                    <EditClientBtn client={client} refetch={refetch} />
-                    <PromiseBtn client={client} refetch={refetch} />
-                    <PaidBtns client={client} refetch={refetch} />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 2. Desktop Table View */}
-            <div id="printable-client-table" className="hidden md:block bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-100 text-gray-700 text-xs uppercase font-semibold tracking-wider border-b border-gray-200">
-                      <th className="py-4 px-4 text-center">SL</th>
-                      <th className="py-4 px-4">Client Name</th>
-                      <th className="py-4 px-4">Address</th>
-                      <th className="py-4 px-4">Mobile</th>
-                      <th className="py-4 px-4">IP Address</th>
-                      <th className="py-4 px-4">Zone</th>
-                      <th className="py-4 px-4 text-center">Speed</th>
-                      <th className="py-4 px-4 text-right">Amount</th>
-                      <th className="py-4 px-4 text-center">Conn. Date</th>
-                      <th className="py-4 px-4 text-center">Status</th>
-                      <th className="py-4 px-4">Notes</th>
-                      <th className="py-4 px-4 text-center no-print">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm text-gray-600">
-                    {clientsData.map(client => (
-                      <tr key={client?._id} className="hover:bg-gray-50 transition-colors">
-                        <td className="py-3 px-4 text-center font-medium text-gray-400">{client?.sl}</td>
-                        <td className="py-3 px-4 font-semibold text-gray-800">{client?.client_name}</td>
-                        <td className="py-3 px-4 max-w-xs truncate" title={client?.address}>{client?.address}</td>
-                        <td className="py-3 px-4 font-mono text-xs">
-                          <a href={`tel:${client.mobile}`} className="text-blue-600 hover:underline flex items-center gap-1">
-                            <MdLocalPhone className="text-gray-400" /> {client.mobile}
-                          </a>
-                        </td>
-                        <td className="py-3 px-4 font-mono text-xs text-blue-600"><span className="bg-blue-50 rounded px-1.5 py-0.5">{client?.ip}</span></td>
-                        <td className="py-3 px-4 text-gray-500">{client.zone}</td>
-                        <td className="py-3 px-4 text-center"><span className="bg-purple-100 text-purple-700 font-semibold px-2 py-1 rounded text-xs">{client?.speed}</span></td>
-                        <td className="py-3 px-4 text-right font-semibold text-gray-900">৳{client?.amount}</td>
-                        <td className="py-3 px-4 text-center text-xs text-gray-500">{client?.connection_date}</td>
-                        <td className="py-3 px-4 text-center">
-                          {/* ⚡ ডেক্সটপ ভিউতে স্ট্যাটাস এর পাশে রিপোর্ট বাটন */}
-                          <div className="flex flex-col items-center justify-center gap-1.5">
-                            <span onClick={() => handleStatusUpdate(client?._id, client?.status)} className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border cursor-pointer ${client?.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>{client?.status}</span>
-                            <ReportBtn client={client} />
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-xs max-w-[180px] text-gray-500 italic">
-                          {client?.promise_date ? (
-                            <span className="block bg-amber-50 text-amber-800 p-1.5 rounded border border-amber-100">
-                              Promise: {client.promise_date} <br />
-                              <small className="text-gray-500">{client?.promise_note}</small>
-                            </span>
-                          ) : (
-                            <span className="block bg-yellow-50 text-yellow-800 p-1.5 rounded border border-yellow-100 truncate">Package upgrade next month.</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-center no-print">
-                          <div className="flex items-center justify-center gap-1.5">
-                            <EditClientBtn client={client} refetch={refetch} />
-                            <PromiseBtn client={client} refetch={refetch} />
-                            <PaidBtns client={client} refetch={refetch} />
-                            <button onClick={() => handleMarkPaid(client?.client_name)} className="btn btn-xs btn-success text-white font-medium">Paid</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                ))}
               </div>
-            </div>
 
-            {/* 3. প্যাগিনেশন */}
-            <div className="flex justify-center items-center gap-4 mt-6 pb-10">
-              <button disabled={page === 1} onClick={() => setPage(prev => prev - 1)} className="btn btn-sm btn-outline flex items-center gap-1"><MdNavigateBefore size={18} /> Previous</button>
-              <span className="text-xs md:text-sm font-semibold text-gray-700">Page {page} of {totalPages}</span>
-              <button disabled={page === totalPages} onClick={() => setPage(prev => prev + 1)} className="btn btn-sm btn-outline flex items-center gap-1">Next <MdNavigateNext size={18} /></button>
-            </div>
-          </>
-        )}
+              {/* 🖥️ Desktop Table View (এখানে স্ক্রল লক করা হয়েছে পিসির জন্য) */}
+              <div id="printable-client-table" className="hidden md:block bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 flex-grow min-h-0">
+                <div className="overflow-y-auto max-h-full h-full custom-scrollbar">
+                  <table className="w-full text-left border-collapse relative">
+                    <thead>
+                      <tr className="bg-slate-50/70 backdrop-blur-md text-slate-500 text-[11px] uppercase font-bold tracking-wider border-b border-slate-100 sticky top-0 z-10">
+                        <th className="py-3 px-4 text-center w-12">SL</th>
+                        <th className="py-3 px-4">Client Name</th>
+                        <th className="py-3 px-4">Address</th>
+                        <th className="py-3 px-4">Mobile</th>
+                        <th className="py-3 px-4">IP Address</th>
+                        <th className="py-3 px-4">Zone</th>
+                        <th className="py-3 px-4 text-center">Speed</th>
+                        <th className="py-3 px-4 text-right">Amount</th>
+                        <th className="py-3 px-4 text-center">Conn. Date</th>
+                        <th className="py-3 px-4 text-center">Status</th>
+                        <th className="py-3 px-4 max-w-[200px]">Notes / Promises</th>
+                        <th className="py-3 px-4 text-center no-print">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-xs md:text-sm text-slate-600 font-medium">
+                      {clientsData.map(client => (
+                        <tr key={client?._id} className="hover:bg-slate-50/50 transition-colors group">
+                          <td className="py-2.5 px-4 text-center font-bold text-slate-400 font-mono">{client?.sl}</td>
+                          <td className="py-2.5 px-4 font-bold text-slate-800 tracking-tight">{client?.client_name}</td>
+                          <td className="py-2.5 px-4 max-w-xs truncate text-slate-500" title={client?.address}>{client?.address}</td>
+                          <td className="py-2.5 px-4 font-mono text-xs">
+                            <a href={`tel:${client.mobile}`} className="text-blue-600 hover:underline flex items-center gap-1 w-fit">
+                              <MdLocalPhone className="text-slate-400 group-hover:text-emerald-500 transition-colors" /> {client.mobile}
+                            </a>
+                          </td>
+                          <td className="py-2.5 px-4 font-mono text-xs">
+                            <span className="bg-blue-50/70 text-blue-600 rounded-lg px-2 py-0.5 font-semibold">{client?.ip}</span>
+                          </td>
+                          <td className="py-2.5 px-4 text-slate-500">{client.zone}</td>
+                          <td className="py-2.5 px-4 text-center">
+                            <span className="bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded-md text-[11px] border border-purple-100">{client?.speed}</span>
+                          </td>
+                          <td className="py-2.5 px-4 text-right font-extrabold text-slate-900">৳{client?.amount}</td>
+                          <td className="py-2.5 px-4 text-center text-xs text-slate-400 font-mono">{client?.connection_date}</td>
+                          <td className="py-2.5 px-4 text-center">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <span 
+                                onClick={() => handleStatusUpdate(client?._id, client?.status)} 
+                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all cursor-pointer ${
+                                  client?.status === 'Active' 
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100' 
+                                    : 'bg-rose-50 text-rose-700 border-rose-100 hover:bg-rose-100'
+                                }`}
+                              >
+                                {client?.status}
+                              </span>
+                              <ReportBtn client={client} />
+                            </div>
+                          </td>
+                          <td className="py-2.5 px-4 text-xs font-normal">
+                            {client?.promise_date ? (
+                              <span className="block bg-amber-50/60 text-amber-900 p-2 rounded-xl border border-amber-100 line-clamp-2">
+                                <strong>Promise:</strong> {client.promise_date} <br />
+                                <span className="text-slate-400 italic font-medium">{client?.promise_note}</span>
+                              </span>
+                            ) : (
+                              <span className="block bg-slate-50 text-slate-400 p-1.5 rounded-lg border border-slate-100/70 truncate text-center font-medium">Standard Client</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-4 text-center no-print">
+                            <div className="flex items-center justify-center gap-1">
+                              <EditClientBtn client={client} refetch={refetch} />
+                              <PromiseBtn client={client} refetch={refetch} />
+                              <PaidBtns client={client} refetch={refetch} />
+                              
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* --- PAGINATION FOOTER --- */}
+        <div className="flex justify-center items-center gap-4 py-4 shrink-0 bg-transparent">
+          <button 
+            disabled={page === 1} 
+            onClick={() => setPage(prev => prev - 1)} 
+            className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-semibold shadow-xs disabled:opacity-50 disabled:pointer-events-none hover:bg-slate-50 transition-all"
+          >
+            <MdNavigateBefore size={16} /> Previous
+          </button>
+          <span className="text-xs font-bold text-slate-500 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
+            Page {page} of {totalPages}
+          </span>
+          <button 
+            disabled={page === totalPages} 
+            onClick={() => setPage(prev => prev + 1)} 
+            className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-semibold shadow-xs disabled:opacity-50 disabled:pointer-events-none hover:bg-slate-50 transition-all"
+          >
+            Next <MdNavigateNext size={16} />
+          </button>
+        </div>
+
       </div>
     </div>
   );
